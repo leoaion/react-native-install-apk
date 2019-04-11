@@ -28,7 +28,7 @@ public class InstallApkModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
-    public void install(String path) {
+    public void install(int sdkInt, String applicationId, String path) {
         String cmd = "chmod 777 " +path;
         try {
             Runtime.getRuntime().exec(cmd);
@@ -37,7 +37,17 @@ public class InstallApkModule extends ReactContextBaseJavaModule {
         }
         Intent intent = new Intent(Intent.ACTION_VIEW);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        intent.setDataAndType(Uri.parse("file://" + path),"application/vnd.android.package-archive");
+
+        File file = new File(path);
+        Uri fileUri = Uri.fromFile(file);
+        
+        if (sdkInt >= 24) {
+            fileUri = FileProvider.getUriForFile(_context, applicationId + ".provider", file);
+        }
+
+        intent.setDataAndType(fileUri, "application/vnd.android.package-archive");
+        //intent.setDataAndType(Uri.parse("file://" + path),"application/vnd.android.package-archive");
+	    intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
         _context.startActivity(intent);
     }
 }
