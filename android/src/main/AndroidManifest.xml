@@ -2,7 +2,6 @@
     package="com.heyao216.react_native_installapk">
 
     <application
-        android:allowBackup="true"
         android:label="@string/app_name"
         android:supportsRtl="true">
 
